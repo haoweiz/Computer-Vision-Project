@@ -39,20 +39,20 @@ def get_homography_matrix(kp1,kp2,good1):
   
 
 def draw_inliers(ranmatchnum,img1,kp1,img2,kp2,good1,H,mask,inlierpath):
-     matchesMask = mask.ravel().tolist()
-     h,w,d = img1.shape
-     pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
-     dst = cv2.perspectiveTransform(pts,H)
-     masklen = len(matchesMask)
-     partmatchesMask = []
-     partgood1 = []
-     for i in range(0,ranmatchnum):
-         index = np.random.randint(0,masklen)
-         partmatchesMask.append(matchesMask[index])
-         partgood1.append(good1[index])
-     draw_params = dict(matchesMask = partmatchesMask,flags = 2)
-     img = cv2.drawMatches(img1,kp1,img2,kp2,partgood1,None,**draw_params)
-     cv2.imwrite(inlierpath,img)
+    matchesMask = mask.ravel().tolist()
+    h,w,d = img1.shape
+    pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
+    dst = cv2.perspectiveTransform(pts,H)
+    masklen = len(matchesMask)
+    partmatchesMask = []
+    partgood1 = []
+    for i in range(0,ranmatchnum):
+        index = np.random.randint(0,masklen)
+        partmatchesMask.append(matchesMask[index])
+        partgood1.append(good1[index])
+    draw_params = dict(matchesMask = partmatchesMask,flags = 2)
+    img = cv2.drawMatches(img1,kp1,img2,kp2,partgood1,None,**draw_params)
+    cv2.imwrite(inlierpath,img)
 
 def splice(img1,img2,H,panopath):
     wrap = cv2.warpPerspective(img2,H,(img1.shape[1]+img1.shape[1],img2.shape[0]+img2.shape[0]))

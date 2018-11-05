@@ -102,8 +102,8 @@ def draw(alldata,kind2index,count):
         for index in kind2index[elem]:
             data.append(alldata[index])
         data = np.array(data)
-        x,y = alldata.T
-        plt.plot(x, y, 'ro')
+        x,y = np.array(data).T
+        plt.plot(x, y, 'ro',color=rgbcolor[elem])
         plot_point_cov(data, nstd=3, alpha=0.5, color=rgbcolor[elem])
     plt.savefig("bonus_result/task3_gmm_iter"+str(count)+".jpg")
     plt.clf()

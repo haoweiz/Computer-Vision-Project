@@ -51,8 +51,8 @@ def reclassify(savepath):
         for pt in pts:
             x_list.append(pt[0])
             y_list.append(pt[1])
+            plt.text(pt[0],pt[1],"("+str(pt[0])+","+str(pt[1])+")",ha='center',va='bottom',fontsize=10)
         ax.scatter(x_list,y_list,c=color[elem],marker='^',s=50,alpha=1)
-    print kind2index
     plt.savefig(savepath)
     plt.clf()
     return kind2index
@@ -70,8 +70,8 @@ def recompute_mean(kind2index,meanpath):
         y_list[0] = y_list[0]/len(pts)
         center[elem][0] = x_list[0]
         center[elem][1] = y_list[0]
+        plt.text(x_list[0],y_list[0],"("+str(x_list[0])+","+str(y_list[0])+")",ha='center',va='bottom',fontsize=10)
         ax.scatter(x_list,y_list,c=color[elem],s=50,alpha=1)
-        print x_list[0],y_list[0]
     plt.savefig(meanpath)
     plt.clf()
 
@@ -141,6 +141,7 @@ def color_quant(imgpath,outpath,k):
         else:
             oldcenter = newcenter
     cv2.imwrite(outpath,img)
+    print "save image "+str(k)
 
 if __name__ == "__main__":
     folder = "part3_result"

@@ -31,8 +31,8 @@ def draw_match(img1,kp1,des1,img2,kp2,des2,outputmatch):
     return good1,good2,img
 
 def get_homography_matrix(kp1,kp2,good1):
-    src_pts = np.float32([ kp2[m.trainIdx].pt for m in good1 ]).reshape(-1,1,2)
-    dst_pts = np.float32([ kp1[m.queryIdx].pt for m in good1 ]).reshape(-1,1,2)
+    src_pts = np.float32([ kp1[m.queryIdx].pt for m in good1 ]).reshape(-1,1,2)
+    dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good1 ]).reshape(-1,1,2)
     H,mask = cv2.findHomography(src_pts,dst_pts,cv2.RANSAC,5.0)
     print H
     return H,mask
@@ -54,9 +54,16 @@ def draw_inliers(ranmatchnum,img1,kp1,img2,kp2,good1,H,mask,inlierpath):
     img = cv2.drawMatches(img1,kp1,img2,kp2,partgood1,None,**draw_params)
     cv2.imwrite(inlierpath,img)
 
+def transfer(H,dx,dy):
+    transfermat = np.array([[1,0,dx],[0,1,dy],[0,0,1]])
+    return np.dot(transfermat,H)
+
 def splice(img1,img2,H,panopath):
-    wrap = cv2.warpPerspective(img2,H,(img1.shape[1]+img1.shape[1],img2.shape[0]+img2.shape[0]))
-    wrap[0:img1.shape[0],0:img1.shape[1]] = img1
+    dx = 700
+    dy = 700
+    transfermat = transfer(H,dx,dy)
+    wrap = cv2.warpPerspective(img1,transfermat,(img1.shape[1]+img2.shape[1]+dx,img2.shape[0]+img2.shape[0]+dy))
+    wrap[dx:img1.shape[0]+dx,dy:img1.shape[1]+dy] = img2
     rows,cols = np.where(wrap[:,:,0] != 0)
     min_row,max_row = min(rows),max(rows)+1 
     min_col,max_col = min(cols),max(cols)+1 
